@@ -1,0 +1,10 @@
+server:
+  http_addr: ""
+notify:
+  lark_error_key: ""
+db:
+  mysql:
+    addr: "docker.for.mac.localhost:3306" #"127.0.0.1:3306"
+    user: "root"
+    password: "12345678"
+    db_name: "remote_sign_db"
