@@ -8,14 +8,18 @@ import (
 )
 
 func (t *ToolPrompt) encData() error {
+	if t.key == "" {
+		fmt.Println("❌ Encryption key is empty")
+		return nil
+	}
 	validate := func(input string) error {
 		if strings.TrimSpace(input) == "" {
-			return fmt.Errorf("加密数据不能为空")
+			return fmt.Errorf("❌ Encrypted data cannot be empty")
 		}
 		return nil
 	}
 	prompt := promptui.Prompt{
-		Label:    "请输入要加密的数据",
+		Label:    "Please enter the data to be encrypted",
 		Validate: validate,
 	}
 	result, err := prompt.Run()
@@ -26,19 +30,23 @@ func (t *ToolPrompt) encData() error {
 	if err != nil {
 		return fmt.Errorf("AesEncrypt err: %s", err.Error())
 	}
-	fmt.Printf("加密结果: \n%s\n", string(target))
+	fmt.Printf("Encryption Result: \n%s\n", target)
 	return nil
 }
 
 func (t *ToolPrompt) decData() error {
+	if t.key == "" {
+		fmt.Println("❌ Encryption key is empty")
+		return nil
+	}
 	validate := func(input string) error {
 		if strings.TrimSpace(input) == "" {
-			return fmt.Errorf("解密数据不能为空")
+			return fmt.Errorf("❌ Decrypted data cannot be empty")
 		}
 		return nil
 	}
 	prompt := promptui.Prompt{
-		Label:    "请输入要解密的数据",
+		Label:    "Please enter the data to be decrypted",
 		Validate: validate,
 	}
 	result, err := prompt.Run()
@@ -49,6 +57,6 @@ func (t *ToolPrompt) decData() error {
 	if err != nil {
 		return fmt.Errorf("AesDecrypt err: %s", err.Error())
 	}
-	fmt.Printf("解密结果: \n%s\n", string(target))
+	fmt.Printf("Decryption Result: \n%s\n", target)
 	return nil
 }

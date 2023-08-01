@@ -1,5 +1,7 @@
 server:
   http_addr: ""
+ip_whitelist:
+  "127.0.0.1": ""
 notify:
   lark_error_key: ""
 db:

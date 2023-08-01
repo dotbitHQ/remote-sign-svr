@@ -13,7 +13,7 @@ func (t *ToolPrompt) createWallet() error {
 	prompts := promptui.Select{
 		HideHelp: true,
 		Size:     len(t.walletFunc),
-		Label:    "请选择要创建的钱包类型👇",
+		Label:    "Please select the type of wallet you want to create 👇",
 		Items:    t.getWalletNames(),
 	}
 	_, result, err := prompts.Run()
@@ -43,7 +43,7 @@ func (t *ToolPrompt) initWalletFunc() {
 	t.walletFunc["4.CKB"] = func() error {
 		return wallet.CreateWalletCKB(address.Mainnet)
 	}
-	t.walletFunc["5.返回"] = func() error {
+	t.walletFunc["5.back"] = func() error {
 		return t.Menu()
 	}
 }

@@ -13,11 +13,10 @@ import (
 )
 
 type ReqRemoteSign struct {
-	AddrChain  tables.AddrChain `json:"addr_chain"`
-	Address    string           `json:"address"`
-	EvmChainID int64            `json:"evm_chain_id"`
-	SignType   wallet.SignType  `json:"sign_type"`
-	Data       string           `json:"data"`
+	SignType   wallet.SignType `json:"sign_type"`
+	Address    string          `json:"address"`
+	EvmChainID int64           `json:"evm_chain_id"`
+	Data       string          `json:"data"`
 }
 
 func (r *ReqRemoteSign) ChainId() *big.Int {
@@ -45,12 +44,10 @@ func (h *HttpHandle) RemoteSign(ctx *gin.Context) {
 	}
 	log.Info("ApiReq:", funcName, clientIp, remoteAddr, toolib.JsonString(req))
 
-	if _, ok := config.Cfg.IpWhitelist[clientIp]; !ok {
-		if _, ok = config.Cfg.IpWhitelist[remoteAddr]; !ok {
-			apiResp.ApiRespErr(http_api.ApiCodeIpBlockingAccess, "IP Blocking Access")
-			ctx.JSON(http.StatusOK, apiResp)
-			return
-		}
+	checkIP(&apiResp, clientIp, remoteAddr)
+	if apiResp.ErrNo != http_api.ApiCodeSuccess {
+		ctx.JSON(http.StatusOK, apiResp)
+		return
 	}
 
 	if err = h.doRemoteSign(&req, &apiResp); err != nil {
@@ -69,12 +66,13 @@ func (h *HttpHandle) doRemoteSign(req *ReqRemoteSign, apiResp *http_api.ApiResp)
 		return nil
 	}
 
-	// Check if it's in the ip whitelist
-
 	// Get address info by addr
-	addrInfo, err := h.DbDao.GetAddressInfo(req.AddrChain, req.Address)
+	addrInfo, err := h.DbDao.GetAddressInfo(req.Address)
 	if err != nil {
 		apiResp.ApiRespErr(http_api.ApiCodeDbError, err.Error())
+		return fmt.Errorf("GetAddressInfo err: %s", err.Error())
+	} else if addrInfo.Id == 0 {
+		apiResp.ApiRespErr(http_api.ApiCodeWalletAddrNotExist, "Wallet address does not exist")
 		return nil
 	}
 	if addrInfo.AddrStatus != tables.AddrStatusDefault {

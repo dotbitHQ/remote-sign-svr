@@ -12,7 +12,7 @@ func (t *ToolPrompt) Menu() error {
 	prompts := promptui.Select{
 		HideHelp: true,
 		Size:     len(t.cmdFunc),
-		Label:    "请继续选择功能👇",
+		Label:    "Please continue to select function 👇",
 		Items:    t.getCmdNames(),
 	}
 	_, result, err := prompts.Run()
@@ -39,25 +39,25 @@ func (t *ToolPrompt) initCmdFunc() {
 		return
 	}
 	t.cmdFunc = make(map[string]func() error)
-	t.cmdFunc["1.激活签名服务"] = func() error {
+	t.cmdFunc["1.Activate Remote Sign Svr"] = func() error {
 		return t.initRemoteSignSvr()
 	}
-	t.cmdFunc["2.创建钱包"] = func() error {
+	t.cmdFunc["2.Create Wallet"] = func() error {
 		return t.createWallet()
 	}
-	t.cmdFunc["3.导入钱包"] = func() error {
+	t.cmdFunc["3.Import Wallet"] = func() error {
 		return t.importWallet()
 	}
-	t.cmdFunc["4.获取钱包信息"] = func() error {
+	t.cmdFunc["4.Search Wallet Info"] = func() error {
 		return t.getWalletInfo()
 	}
-	t.cmdFunc["5.加密"] = func() error {
+	t.cmdFunc["5.Encrypted Data"] = func() error {
 		return t.encData()
 	}
-	t.cmdFunc["6.解密"] = func() error {
+	t.cmdFunc["6.Decrypted Data"] = func() error {
 		return t.decData()
 	}
-	t.cmdFunc["6.退出"] = func() error {
+	t.cmdFunc["6.Exit"] = func() error {
 		os.Exit(1)
 		return nil
 	}

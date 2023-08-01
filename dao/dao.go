@@ -5,6 +5,7 @@ import (
 	"github.com/scorpiotzh/toolib"
 	"gorm.io/gorm"
 	"remote-sign-svr/config"
+	"remote-sign-svr/tables"
 )
 
 type DbDao struct {
@@ -18,7 +19,7 @@ func NewGormDB(dbMysql config.DbMysql) (*DbDao, error) {
 	}
 
 	if err = db.AutoMigrate(
-	// todo
+		tables.TableAddressInfo{},
 	); err != nil {
 		return nil, err
 	}
