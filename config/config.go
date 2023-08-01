@@ -39,6 +39,7 @@ func AddCfgFileWatcher(configFilePath string) (*fsnotify.Watcher, error) {
 
 type CfgServer struct {
 	Server struct {
+		key      string `json:"key" yaml:"key"`
 		HttpAddr string `json:"http_addr" yaml:"http_addr"`
 	} `json:"server" yaml:"server"`
 	Notify struct {
@@ -54,4 +55,12 @@ type DbMysql struct {
 	User     string `json:"user" yaml:"user"`
 	Password string `json:"password" yaml:"password"`
 	DbName   string `json:"db_name" yaml:"db_name"`
+}
+
+func (c *CfgServer) SetKey(key string) {
+	c.Server.key = key
+}
+
+func (c *CfgServer) GetKey() string {
+	return c.Server.key
 }

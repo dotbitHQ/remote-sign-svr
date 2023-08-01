@@ -21,6 +21,7 @@ func (h *HttpSvr) initRouter() {
 
 		// query
 		v1.POST("/version", DoMonitorLog("version"), h.H.Version)
+		v1.POST("/remote/sign", DoMonitorLog("remote_sign"), h.H.RemoteSign)
 
 		// operate
 	}

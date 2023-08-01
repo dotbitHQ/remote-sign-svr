@@ -3,13 +3,14 @@ module remote-sign-svr
 go 1.17
 
 require (
-	github.com/dotbitHQ/das-lib v1.0.2-0.20230731062915-041bf130521f
+	github.com/dotbitHQ/das-lib v1.0.2-0.20230801065605-3202f5ab7ab3
 	github.com/scorpiotzh/mylog v1.0.10
 	github.com/scorpiotzh/toolib v1.1.6
 	github.com/urfave/cli/v2 v2.10.2
 )
 
 require (
+	github.com/btcsuite/btcd v0.23.3
 	github.com/btcsuite/btcd/btcec/v2 v2.2.0
 	github.com/btcsuite/btcd/btcutil v1.1.3
 	github.com/ethereum/go-ethereum v1.10.26
@@ -24,7 +25,6 @@ require (
 require (
 	github.com/Andrew-M-C/go.emoji v1.0.1 // indirect
 	github.com/StackExchange/wmi v0.0.0-20180116203802-5d049714c4a6 // indirect
-	github.com/btcsuite/btcd v0.23.3 // indirect
 	github.com/btcsuite/btcd/chaincfg/chainhash v1.0.1 // indirect
 	github.com/btcsuite/btclog v0.0.0-20170628155309-84c8d2346e9f // indirect
 	github.com/btcsuite/btcutil v1.0.3-0.20201208143702-a53e38424cce // indirect
