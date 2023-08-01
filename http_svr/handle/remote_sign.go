@@ -45,6 +45,14 @@ func (h *HttpHandle) RemoteSign(ctx *gin.Context) {
 	}
 	log.Info("ApiReq:", funcName, clientIp, remoteAddr, toolib.JsonString(req))
 
+	if _, ok := config.Cfg.IpWhitelist[clientIp]; !ok {
+		if _, ok = config.Cfg.IpWhitelist[remoteAddr]; !ok {
+			apiResp.ApiRespErr(http_api.ApiCodeIpBlockingAccess, "IP Blocking Access")
+			ctx.JSON(http.StatusOK, apiResp)
+			return
+		}
+	}
+
 	if err = h.doRemoteSign(&req, &apiResp); err != nil {
 		log.Error("doRemoteSign err:", err.Error(), funcName, clientIp, remoteAddr)
 	}
@@ -60,6 +68,8 @@ func (h *HttpHandle) doRemoteSign(req *ReqRemoteSign, apiResp *http_api.ApiResp)
 		apiResp.ApiRespErr(http_api.ApiCodeServiceNotActivated, "service not activated")
 		return nil
 	}
+
+	// Check if it's in the ip whitelist
 
 	// Get address info by addr
 	addrInfo, err := h.DbDao.GetAddressInfo(req.AddrChain, req.Address)

@@ -42,7 +42,8 @@ type CfgServer struct {
 		key      string `json:"key" yaml:"key"`
 		HttpAddr string `json:"http_addr" yaml:"http_addr"`
 	} `json:"server" yaml:"server"`
-	Notify struct {
+	IpWhitelist map[string]struct{} `json:"ip_whitelist" yaml:"ip_whitelist"`
+	Notify      struct {
 		LarkErrorKey string `json:"lark_error_key" yaml:"lark_error_key"`
 	} `json:"notify" yaml:"notify"`
 	DB struct {
