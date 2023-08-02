@@ -49,8 +49,21 @@ func (t *ToolPrompt) initKey() error {
 }
 
 func (t *ToolPrompt) initRemoteSignSvr() error {
-	if err := t.initKey(); err != nil {
-		return fmt.Errorf("initKey err: %s", err.Error())
+	if t.key == "" {
+		if err := t.initKey(); err != nil {
+			return fmt.Errorf("initKey err: %s", err.Error())
+		}
+	}
+
+	prompt := promptui.Prompt{
+		Label: "Whether to activate the remote sign svr(y/n)",
+	}
+	key, err := prompt.Run()
+	if err != nil {
+		return fmt.Errorf("prompt.Run() err: %s", err.Error())
+	}
+	if key != "y" {
+		return nil
 	}
 
 	url := fmt.Sprintf("http://%s/v1/init/svr", t.remoteSignSvr)

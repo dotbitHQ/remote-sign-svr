@@ -58,5 +58,6 @@ func (t *ToolPrompt) getWalletNames() []string {
 }
 
 func (t *ToolPrompt) importWallet() error {
+
 	return nil
 }

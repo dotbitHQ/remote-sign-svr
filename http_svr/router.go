@@ -21,12 +21,13 @@ func (h *HttpSvr) initRouter() {
 
 		// query
 		v1.POST("/version", DoMonitorLog("version"), h.H.Version)
-		v1.POST("/remote/sign", DoMonitorLog("remote_sign"), h.H.RemoteSign)
 		v1.POST("/svr/info", DoMonitorLog("svr_info"), h.H.SvrInfo)
+		v1.POST("/remote/sign", DoMonitorLog("remote_sign"), h.H.RemoteSign)
 		v1.POST("/address/info", DoMonitorLog("address_info"), h.H.AddressInfo)
 
 		// operate
 		v1.POST("/init/svr", DoMonitorLog("init_svr"), h.H.InitSvr)
+		v1.POST("/import/address", DoMonitorLog("import_address"), h.H.ImportAddress)
 	}
 }
 

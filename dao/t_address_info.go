@@ -2,6 +2,7 @@ package dao
 
 import (
 	"fmt"
+	"gorm.io/gorm/clause"
 	"remote-sign-svr/tables"
 )
 
@@ -15,4 +16,10 @@ func (d *DbDao) GetAddressListGroupByAddrChain() (list []tables.TableAddressInfo
 		tables.TableNameAddressInfo, tables.TableNameAddressInfo)
 	err = d.db.Raw(sql).Find(&list).Error
 	return
+}
+
+func (d *DbDao) CreateAddressInfo(addrInfo tables.TableAddressInfo) error {
+	return d.db.Clauses(clause.Insert{
+		Modifier: "IGNORE",
+	}).Create(&addrInfo).Error
 }
