@@ -20,7 +20,8 @@ func (t *ToolPrompt) Menu() error {
 		return fmt.Errorf("prompts.Run() err: %s", err.Error())
 	}
 	if err := t.cmdFunc[result](); err != nil {
-		return fmt.Errorf("p.cmdFunc[%s]() err: %s", result, err.Error())
+		e := fmt.Errorf("❌ Failed to execute p.cmdFunc[%s]() err:\n%s", result, err.Error())
+		fmt.Println(e.Error())
 	}
 	return t.Menu()
 }
@@ -40,7 +41,7 @@ func (t *ToolPrompt) initCmdFunc() {
 	}
 	t.cmdFunc = make(map[string]func() error)
 	t.cmdFunc["1.Activate Remote Sign Svr"] = func() error {
-		return t.initRemoteSignSvr()
+		return t.activateRemoteSignSvr()
 	}
 	t.cmdFunc["2.Create Wallet"] = func() error {
 		return t.createWallet()

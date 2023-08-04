@@ -10,7 +10,7 @@ import (
 func (t *ToolPrompt) encData() error {
 	if t.key == "" {
 		fmt.Println("❌ Encryption key is empty")
-		return nil
+		return t.Menu()
 	}
 	validate := func(input string) error {
 		if strings.TrimSpace(input) == "" {
@@ -37,7 +37,7 @@ func (t *ToolPrompt) encData() error {
 func (t *ToolPrompt) decData() error {
 	if t.key == "" {
 		fmt.Println("❌ Encryption key is empty")
-		return nil
+		return t.Menu()
 	}
 	validate := func(input string) error {
 		if strings.TrimSpace(input) == "" {

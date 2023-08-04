@@ -48,7 +48,7 @@ func (t *ToolPrompt) initKey() error {
 	return nil
 }
 
-func (t *ToolPrompt) initRemoteSignSvr() error {
+func (t *ToolPrompt) activateRemoteSignSvr() error {
 	if t.key == "" {
 		if err := t.initKey(); err != nil {
 			return fmt.Errorf("initKey err: %s", err.Error())
@@ -62,7 +62,7 @@ func (t *ToolPrompt) initRemoteSignSvr() error {
 	if err != nil {
 		return fmt.Errorf("prompt.Run() err: %s", err.Error())
 	}
-	if key != "y" {
+	if key != "y" && key != "Y" {
 		return nil
 	}
 
@@ -70,7 +70,7 @@ func (t *ToolPrompt) initRemoteSignSvr() error {
 	req := handle.ReqInitSvr{Key: t.key}
 	resp := handle.RespInitSvr{}
 	if err := http_api.SendReq(url, req, &resp); err != nil {
-		doErr(err, "❌ Failed to init remote sign svr")
+		doErr(err, "❌ Failed to activate remote sign svr")
 		return nil
 	}
 	return nil
@@ -91,7 +91,7 @@ func (t *ToolPrompt) getWalletInfo() error {
 		doErr(err, "❌ Failed to get address info")
 		return nil
 	}
-	msg := fmt.Sprintf(`Address: %s
+	msg := fmt.Sprintf(`\nAddress: %s
 AddrChain: %s
 Private: %s
 CompressType: %t

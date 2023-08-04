@@ -22,7 +22,7 @@ func (t *ToolPrompt) InitRemoteSignSvr() error {
 	}
 	svr, err := prompt.Run()
 	if err != nil {
-		return fmt.Errorf("prompt.Run() err: %s", err.Error())
+		return fmt.Errorf("prompt.Run() err:\n%s", err.Error())
 	}
 	t.remoteSignSvr = svr
 	if t.remoteSignSvr == "" {

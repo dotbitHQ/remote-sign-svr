@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/dotbitHQ/das-lib/http_api"
 	"github.com/gin-gonic/gin"
-	"github.com/scorpiotzh/toolib"
 	"net/http"
 	"remote-sign-svr/config"
 	"remote-sign-svr/encrypt"
@@ -32,7 +31,7 @@ func (h *HttpHandle) InitSvr(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, apiResp)
 		return
 	}
-	log.Info("ApiReq:", funcName, clientIp, remoteAddr, toolib.JsonString(req))
+	log.Info("ApiReq:", funcName, clientIp, remoteAddr)
 
 	if err = h.doInitSvr(&req, &apiResp); err != nil {
 		log.Error("doInitSvr err:", err.Error(), funcName, clientIp, remoteAddr)
