@@ -84,7 +84,7 @@ func signTx(addrInfo tables.TableAddressInfo, data string, chainId *big.Int) (st
 		if err != nil {
 			return "", fmt.Errorf("hex.DecodeString err: %s", err.Error())
 		}
-		var tx *wire.MsgTx
+		var tx wire.MsgTx
 		if err = tx.DeserializeNoWitness(bytes.NewReader(bys)); err != nil {
 			return "", fmt.Errorf("tx.DeserializeNoWitness err: %s", err.Error())
 		}
@@ -93,7 +93,7 @@ func signTx(addrInfo tables.TableAddressInfo, data string, chainId *big.Int) (st
 			if err != nil {
 				return "", fmt.Errorf("HexPrivateKeyToScript err: %s", err.Error())
 			}
-			sig, err := txscript.SignatureScript(tx, i, pkScript, txscript.SigHashAll, privateKey, compress)
+			sig, err := txscript.SignatureScript(&tx, i, pkScript, txscript.SigHashAll, privateKey, compress)
 			if err != nil {
 				return "", fmt.Errorf("SignatureScript err: %s", err.Error())
 			}
