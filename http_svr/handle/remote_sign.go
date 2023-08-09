@@ -8,6 +8,7 @@ import (
 	"math/big"
 	"net/http"
 	"remote-sign-svr/config"
+	"remote-sign-svr/encrypt"
 	"remote-sign-svr/tables"
 	"remote-sign-svr/wallet"
 )
@@ -61,7 +62,8 @@ func (h *HttpHandle) doRemoteSign(req *ReqRemoteSign, apiResp *http_api.ApiResp)
 	var resp RespRemoteSign
 
 	// Check if the service is active
-	if key := config.Cfg.GetKey(); key == "" {
+	key := config.Cfg.GetKey()
+	if key == "" {
 		apiResp.ApiRespErr(http_api.ApiCodeServiceNotActivated, "service not activated")
 		return nil
 	}
@@ -80,6 +82,13 @@ func (h *HttpHandle) doRemoteSign(req *ReqRemoteSign, apiResp *http_api.ApiResp)
 		return nil
 	}
 
+	//
+	addrInfo.Private, err = encrypt.AesDecrypt(addrInfo.Private, key)
+	if err != nil {
+		apiResp.ApiRespErr(http_api.ApiCodeError500, err.Error())
+		return fmt.Errorf("encrypt.AesDecrypt err: %s", err.Error())
+	}
+
 	// sign
 	data, err := wallet.Sign(req.SignType, addrInfo, req.Data, req.ChainId())
 	if err != nil {
@@ -92,7 +101,7 @@ func (h *HttpHandle) doRemoteSign(req *ReqRemoteSign, apiResp *http_api.ApiResp)
 			return nil
 		default:
 			apiResp.ApiRespErr(http_api.ApiCodeError500, fmt.Sprintf("wallet.Sign err: %s", err.Error()))
-			return nil
+			return fmt.Errorf("wallet.Sign err: %s", err.Error())
 		}
 	}
 

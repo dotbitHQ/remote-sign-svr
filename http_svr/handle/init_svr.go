@@ -50,7 +50,7 @@ func (h *HttpHandle) doInitSvr(req *ReqInitSvr, apiResp *http_api.ApiResp) error
 		return fmt.Errorf("GetAddressListGroupByAddrChain err: %s", err.Error())
 	}
 	for _, v := range list {
-		_, err = encrypt.AesDecrypt(v.Private, config.Cfg.GetKey())
+		_, err = encrypt.AesDecrypt(v.Private, req.Key)
 		if err != nil {
 			apiResp.ApiRespErr(http_api.ApiCodeKeyDiff, "The current key is not the same as the original key")
 			return fmt.Errorf("encrypt.AesDecrypt err: %s", err.Error())
