@@ -7,7 +7,7 @@ import (
 
 type ToolPrompt struct {
 	remoteSignSvr string
-	key           string
+	key           string // 1234567890098765
 	cmdFunc       map[string]func() error
 	walletFunc    map[string]func() error
 }
