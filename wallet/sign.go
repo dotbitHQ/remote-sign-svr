@@ -15,6 +15,7 @@ import (
 	"github.com/nervosnetwork/ckb-sdk-go/crypto/secp256k1"
 	"math/big"
 	"remote-sign-svr/tables"
+	"strings"
 )
 
 var (
@@ -42,12 +43,13 @@ func Sign(signType SignType, addrInfo tables.TableAddressInfo, data string, chai
 
 func signTx(addrInfo tables.TableAddressInfo, data string, chainId *big.Int) (string, error) {
 	private := addrInfo.Private
+	bys, err := hex.DecodeString(strings.TrimPrefix(data, "0x"))
+	if err != nil {
+		return "", fmt.Errorf("hex.DecodeString err: %s", err.Error())
+	}
+
 	switch addrInfo.AddrChain {
 	case tables.AddrChainEVM: // tx hex
-		bys, err := hex.DecodeString(data)
-		if err != nil {
-			return "", fmt.Errorf("hex.DecodeString err: %s", err.Error())
-		}
 		tx := &types.Transaction{}
 		if err = rlp.DecodeBytes(bys, tx); err != nil {
 			return "", fmt.Errorf("rlp.DecodeBytes err: %s", err.Error())
@@ -66,10 +68,6 @@ func signTx(addrInfo tables.TableAddressInfo, data string, chainId *big.Int) (st
 		}
 		return hex.EncodeToString(sigData), nil
 	case tables.AddrChainTRON: // sig hex
-		bys, err := hex.DecodeString(data)
-		if err != nil {
-			return "", fmt.Errorf("hex.DecodeString err: %s", err.Error())
-		}
 		privateKey, err := crypto.HexToECDSA(private)
 		if err != nil {
 			return "", fmt.Errorf("crypto.HexToECDSA err: %s", err.Error())
@@ -80,10 +78,6 @@ func signTx(addrInfo tables.TableAddressInfo, data string, chainId *big.Int) (st
 		}
 		return hex.EncodeToString(sig), nil
 	case tables.AddrChainDOGE: // tx hex
-		bys, err := hex.DecodeString(data)
-		if err != nil {
-			return "", fmt.Errorf("hex.DecodeString err: %s", err.Error())
-		}
 		var tx wire.MsgTx
 		if err = tx.DeserializeNoWitness(bytes.NewReader(bys)); err != nil {
 			return "", fmt.Errorf("tx.DeserializeNoWitness err: %s", err.Error())
@@ -103,10 +97,6 @@ func signTx(addrInfo tables.TableAddressInfo, data string, chainId *big.Int) (st
 		_ = tx.SerializeNoWitness(buf)
 		return hex.EncodeToString(buf.Bytes()), nil
 	case tables.AddrChainCKB: // sig hex
-		bys, err := hex.DecodeString(data)
-		if err != nil {
-			return "", fmt.Errorf("hex.DecodeString err: %s", err.Error())
-		}
 		key, err := secp256k1.HexToKey(private)
 		if err != nil {
 			return "", fmt.Errorf("secp256k1.HexToKey err: %s", err.Error())

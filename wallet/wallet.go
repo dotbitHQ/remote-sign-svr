@@ -10,6 +10,7 @@ import (
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/nervosnetwork/ckb-sdk-go/address"
 	"remote-sign-svr/tables"
+	"strings"
 )
 
 type AddressInfo struct {
@@ -76,5 +77,5 @@ func CreateWalletCKB(mode address.Mode) (*AddressInfo, error) {
 	if err != nil {
 		return nil, fmt.Errorf("GenerateAddress err: %s", err.Error())
 	}
-	return &AddressInfo{AddrChain: tables.AddrChainCKB, Address: res.Address, Private: res.PrivateKey, LockArgs: res.LockArgs}, nil
+	return &AddressInfo{AddrChain: tables.AddrChainCKB, Address: res.Address, Private: strings.TrimPrefix(res.PrivateKey, "0x"), LockArgs: res.LockArgs}, nil
 }

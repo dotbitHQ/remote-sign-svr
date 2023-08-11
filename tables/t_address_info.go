@@ -37,6 +37,7 @@ type AddrStatus int
 
 const (
 	AddrStatusDefault AddrStatus = 0
+	AddrStatusDisable AddrStatus = 1
 )
 
 type CompressType int

@@ -5,6 +5,7 @@ import (
 	"github.com/dotbitHQ/das-lib/http_api"
 	"github.com/manifoldco/promptui"
 	"remote-sign-svr/http_svr/handle"
+	"remote-sign-svr/tables"
 	"strings"
 )
 
@@ -49,10 +50,8 @@ func (t *ToolPrompt) initKey() error {
 }
 
 func (t *ToolPrompt) activateRemoteSignSvr() error {
-	if t.key == "" {
-		if err := t.initKey(); err != nil {
-			return fmt.Errorf("initKey err: %s", err.Error())
-		}
+	if err := t.initKey(); err != nil {
+		return fmt.Errorf("initKey err: %s", err.Error())
 	}
 
 	prompt := promptui.Prompt{
@@ -62,7 +61,10 @@ func (t *ToolPrompt) activateRemoteSignSvr() error {
 	if err != nil {
 		return fmt.Errorf("prompt.Run() err: %s", err.Error())
 	}
-	if key != "y" && key != "Y" {
+
+	switch strings.ToLower(key) {
+	case "y", "Y", "yes", "YES":
+	default:
 		return nil
 	}
 
@@ -73,6 +75,7 @@ func (t *ToolPrompt) activateRemoteSignSvr() error {
 		doErr(err, "❌ Failed to activate remote sign svr")
 		return nil
 	}
+	fmt.Println("✅ Success!")
 	return nil
 }
 
@@ -91,14 +94,49 @@ func (t *ToolPrompt) getWalletInfo() error {
 		doErr(err, "❌ Failed to get address info")
 		return nil
 	}
-	msg := fmt.Sprintf(`\nAddress: %s
+	msg := fmt.Sprintf(`
+Address: %s
 AddrChain: %s
 Private: %s
 CompressType: %t
 AddrStatus: %d
-Remark: %s
+Note: %s
 `, resp.Address, resp.AddrChain, resp.Private, resp.CompressType.Bool(), resp.AddrStatus, resp.Remark)
 	fmt.Println(msg)
+	return nil
+}
+
+func (t *ToolPrompt) enableOrDisableWallet() error {
+	prompt := promptui.Prompt{
+		Label: "Please enter your wallet address",
+	}
+	addr, err := prompt.Run()
+	if err != nil {
+		return fmt.Errorf("prompt.Run() err: %s", err.Error())
+	}
+
+	prompt = promptui.Prompt{
+		Label: "Enable or disable this wallet address(e/d)",
+	}
+	flag, err := prompt.Run()
+	if err != nil {
+		return fmt.Errorf("prompt.Run() err: %s", err.Error())
+	}
+
+	addrStatus := tables.AddrStatusDisable
+	switch strings.ToLower(flag) {
+	case "e", "enable":
+		addrStatus = tables.AddrStatusDefault
+	}
+
+	url := fmt.Sprintf("http://%s/v1/address/disable", t.remoteSignSvr)
+	req := handle.ReqAddressDisable{Address: addr, AddrStatus: addrStatus}
+	resp := handle.RespAddressDisable{}
+	if err := http_api.SendReq(url, req, &resp); err != nil {
+		doErr(err, "❌ Failed to get address info")
+		return nil
+	}
+	fmt.Println("✅ Success!")
 	return nil
 }
 

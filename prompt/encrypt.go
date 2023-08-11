@@ -30,7 +30,7 @@ func (t *ToolPrompt) encData() error {
 	if err != nil {
 		return fmt.Errorf("AesEncrypt err: %s", err.Error())
 	}
-	fmt.Printf("Encryption Result: \n%s\n", target)
+	fmt.Printf("✅ Encryption Result: \n%s\n", target)
 	return nil
 }
 
@@ -57,6 +57,6 @@ func (t *ToolPrompt) decData() error {
 	if err != nil {
 		return fmt.Errorf("AesDecrypt err: %s", err.Error())
 	}
-	fmt.Printf("Decryption Result: \n%s\n", target)
+	fmt.Printf("✅ Decryption Result: \n%s\n", target)
 	return nil
 }

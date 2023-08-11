@@ -24,6 +24,7 @@ func (h *HttpSvr) initRouter() {
 		v1.POST("/svr/info", DoMonitorLog("svr_info"), h.H.SvrInfo)
 		v1.POST("/remote/sign", DoMonitorLog("remote_sign"), h.H.RemoteSign)
 		v1.POST("/address/info", DoMonitorLog("address_info"), h.H.AddressInfo)
+		v1.POST("/address/disable", DoMonitorLog("address_disable"), h.H.AddressDisable)
 
 		// operate
 		v1.POST("/init/svr", DoMonitorLog("init_svr"), h.H.InitSvr)

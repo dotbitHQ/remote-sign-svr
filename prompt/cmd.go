@@ -52,13 +52,16 @@ func (t *ToolPrompt) initCmdFunc() {
 	t.cmdFunc["4.Search Wallet Info"] = func() error {
 		return t.getWalletInfo()
 	}
-	t.cmdFunc["5.Encrypted Data"] = func() error {
+	t.cmdFunc["5.Enable or Disable Wallet"] = func() error {
+		return t.enableOrDisableWallet()
+	}
+	t.cmdFunc["6.Encrypted Data"] = func() error {
 		return t.encData()
 	}
-	t.cmdFunc["6.Decrypted Data"] = func() error {
+	t.cmdFunc["7.Decrypted Data"] = func() error {
 		return t.decData()
 	}
-	t.cmdFunc["6.Exit"] = func() error {
+	t.cmdFunc["8.Exit"] = func() error {
 		os.Exit(1)
 		return nil
 	}

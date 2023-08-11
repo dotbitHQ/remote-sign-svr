@@ -28,5 +28,6 @@ func (t *ToolPrompt) InitRemoteSignSvr() error {
 	if t.remoteSignSvr == "" {
 		t.remoteSignSvr = "127.0.0.1:9093"
 	}
+	fmt.Println("✅ Remote Sign Svr:", t.remoteSignSvr)
 	return nil
 }

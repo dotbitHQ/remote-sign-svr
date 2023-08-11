@@ -49,7 +49,9 @@ func (t *ToolPrompt) importNow(wa *wallet.AddressInfo) error {
 	if err != nil {
 		return fmt.Errorf("prompt.Run() err: %s", err.Error())
 	}
-	if key != "y" {
+	switch key {
+	case "y", "Y", "yes", "YES":
+	default:
 		return nil
 	}
 	if t.key == "" {
@@ -82,6 +84,7 @@ func (t *ToolPrompt) importNow(wa *wallet.AddressInfo) error {
 		doErr(err, "❌ Failed to import address")
 		return nil
 	}
+	fmt.Println("✅ Success!")
 	return nil
 }
 
@@ -120,7 +123,8 @@ func (t *ToolPrompt) initWalletFunc() {
 			return fmt.Errorf("prompt.Run() err: %s", err.Error())
 		}
 		mode := address.Mainnet
-		if key == "y" {
+		switch key {
+		case "y", "Y", "yes", "YES":
 			mode = address.Testnet
 		}
 		res, err := wallet.CreateWalletCKB(mode)

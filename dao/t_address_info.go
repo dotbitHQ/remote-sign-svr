@@ -23,3 +23,11 @@ func (d *DbDao) CreateAddressInfo(addrInfo tables.TableAddressInfo) error {
 		Modifier: "IGNORE",
 	}).Create(&addrInfo).Error
 }
+
+func (d *DbDao) UpdateAddressStatus(addr string, addrStatus tables.AddrStatus) error {
+	return d.db.Model(tables.TableAddressInfo{}).
+		Where("address=?", addr).
+		Updates(map[string]interface{}{
+			"addr_status": addrStatus,
+		}).Error
+}
