@@ -12,7 +12,7 @@ func (t *ToolPrompt) Menu() error {
 	prompts := promptui.Select{
 		HideHelp: true,
 		Size:     len(t.cmdFunc),
-		Label:    "Please continue to select function 👇",
+		Label:    "Please continue to select function ⬇️",
 		Items:    t.getCmdNames(),
 	}
 	_, result, err := prompts.Run()

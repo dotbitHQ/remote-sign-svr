@@ -17,7 +17,7 @@ func (t *ToolPrompt) createWallet() error {
 	prompts := promptui.Select{
 		HideHelp: true,
 		Size:     len(t.walletFunc),
-		Label:    "Please select the type of wallet you want to create 👇",
+		Label:    "Please select the type of wallet you want to create ⬇️",
 		Items:    t.getWalletNames(),
 	}
 	_, result, err := prompts.Run()
@@ -151,7 +151,7 @@ func (t *ToolPrompt) importWallet() error {
 	prompts := promptui.Select{
 		HideHelp: true,
 		Size:     len(t.walletFunc),
-		Label:    "Please select the type of wallet to import 👇",
+		Label:    "Please select the type of wallet to import ⬇️",
 		Items:    []string{"1.EVM", "2.TRON", "3.DOGE", "4.CKB", "5.back"},
 	}
 	index, _, err := prompts.Run()
