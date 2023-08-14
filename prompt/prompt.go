@@ -18,7 +18,7 @@ const (
 
 func (t *ToolPrompt) InitRemoteSignSvr() error {
 	prompt := promptui.Prompt{
-		Label: "Please enter the IP and port of remote sign svr(127.0.0.1:9093)",
+		Label: "Please enter the IP and port of remote sign svr(127.0.0.1:9094)",
 	}
 	svr, err := prompt.Run()
 	if err != nil {
@@ -26,7 +26,7 @@ func (t *ToolPrompt) InitRemoteSignSvr() error {
 	}
 	t.remoteSignSvr = svr
 	if t.remoteSignSvr == "" {
-		t.remoteSignSvr = "127.0.0.1:9093"
+		t.remoteSignSvr = "127.0.0.1:9094"
 	}
 	fmt.Println("✅ Remote Sign Svr:", t.remoteSignSvr)
 	return nil

@@ -1,5 +1,5 @@
 server:
-  http_addr: ""
+  http_addr: ":9094"
 ip_whitelist:
   "127.0.0.1": ""
 notify:
