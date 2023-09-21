@@ -3,6 +3,7 @@ package http_svr
 import (
 	"encoding/json"
 	"github.com/dotbitHQ/das-lib/http_api"
+	sentrygin "github.com/getsentry/sentry-go/gin"
 	"github.com/gin-gonic/gin"
 	"github.com/scorpiotzh/toolib"
 	"net/http"
@@ -10,6 +11,9 @@ import (
 
 func (h *HttpSvr) initRouter() {
 	h.engine.Use(toolib.MiddlewareCors())
+	h.engine.Use(sentrygin.New(sentrygin.Options{
+		Repanic: true,
+	}))
 	v1 := h.engine.Group("v1")
 	{
 		// cache

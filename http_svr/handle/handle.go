@@ -3,13 +3,13 @@ package handle
 import (
 	"context"
 	"fmt"
+	"github.com/dotbitHQ/das-lib/http_api/logger"
 	"github.com/gin-gonic/gin"
-	"github.com/scorpiotzh/mylog"
 	"remote-sign-svr/dao"
 )
 
 var (
-	log = mylog.NewLogger("http_handle", mylog.LevelDebug)
+	log = logger.NewLogger("http_handle", logger.LevelDebug)
 )
 
 type HttpHandle struct {

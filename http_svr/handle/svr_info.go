@@ -25,15 +25,15 @@ func (h *HttpHandle) SvrInfo(ctx *gin.Context) {
 	)
 
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		log.Error("ShouldBindJSON err: ", err.Error(), funcName, clientIp, remoteAddr)
+		log.Error("ShouldBindJSON err: ", err.Error(), funcName, clientIp, remoteAddr, ctx)
 		apiResp.ApiRespErr(http_api.ApiCodeParamsInvalid, "params invalid")
 		ctx.JSON(http.StatusOK, apiResp)
 		return
 	}
-	log.Info("ApiReq:", funcName, clientIp, remoteAddr, toolib.JsonString(req))
+	log.Info("ApiReq:", funcName, clientIp, remoteAddr, toolib.JsonString(req), ctx)
 
 	if err = h.doSvrInfo(&req, &apiResp); err != nil {
-		log.Error("doSvrInfo err:", err.Error(), funcName, clientIp, remoteAddr)
+		log.Error("doSvrInfo err:", err.Error(), funcName, clientIp, remoteAddr, ctx)
 	}
 
 	ctx.JSON(http.StatusOK, apiResp)

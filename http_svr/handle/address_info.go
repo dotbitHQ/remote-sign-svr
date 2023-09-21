@@ -34,12 +34,12 @@ func (h *HttpHandle) AddressInfo(ctx *gin.Context) {
 	)
 
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		log.Error("ShouldBindJSON err: ", err.Error(), funcName, clientIp, remoteAddr)
+		log.Error("ShouldBindJSON err: ", err.Error(), funcName, clientIp, remoteAddr, ctx)
 		apiResp.ApiRespErr(http_api.ApiCodeParamsInvalid, "params invalid")
 		ctx.JSON(http.StatusOK, apiResp)
 		return
 	}
-	log.Info("ApiReq:", funcName, clientIp, remoteAddr, toolib.JsonString(req))
+	log.Info("ApiReq:", funcName, clientIp, remoteAddr, toolib.JsonString(req), ctx)
 
 	checkIP(&apiResp, clientIp, remoteAddr)
 	if apiResp.ErrNo != http_api.ApiCodeSuccess {
@@ -48,7 +48,7 @@ func (h *HttpHandle) AddressInfo(ctx *gin.Context) {
 	}
 
 	if err = h.doAddressInfo(&req, &apiResp); err != nil {
-		log.Error("doAddressInfo err:", err.Error(), funcName, clientIp, remoteAddr)
+		log.Error("doAddressInfo err:", err.Error(), funcName, clientIp, remoteAddr, ctx)
 	}
 
 	ctx.JSON(http.StatusOK, apiResp)

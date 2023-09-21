@@ -2,14 +2,14 @@ package config
 
 import (
 	"fmt"
+	"github.com/dotbitHQ/das-lib/http_api/logger"
 	"github.com/fsnotify/fsnotify"
-	"github.com/scorpiotzh/mylog"
 	"github.com/scorpiotzh/toolib"
 )
 
 var (
 	Cfg CfgServer
-	log = mylog.NewLogger("config", mylog.LevelDebug)
+	log = logger.NewLogger("config", logger.LevelDebug)
 )
 
 func InitCfg(configFilePath string) error {
@@ -45,6 +45,7 @@ type CfgServer struct {
 	IpWhitelist map[string]string `json:"ip_whitelist" yaml:"ip_whitelist"`
 	Notify      struct {
 		LarkErrorKey string `json:"lark_error_key" yaml:"lark_error_key"`
+		SentryDsn    string `json:"sentry_dsn" yaml:"sentry_dsn"`
 	} `json:"notify" yaml:"notify"`
 	DB struct {
 		Mysql DbMysql `json:"mysql" yaml:"mysql"`
