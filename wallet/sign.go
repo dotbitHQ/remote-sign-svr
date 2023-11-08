@@ -3,15 +3,19 @@ package wallet
 import (
 	"bytes"
 	"encoding/hex"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/btcsuite/btcd/txscript"
 	"github.com/btcsuite/btcd/wire"
 	"github.com/dotbitHQ/das-lib/bitcoin"
+	"github.com/dotbitHQ/das-lib/common"
 	"github.com/dotbitHQ/das-lib/sign"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/ethereum/go-ethereum/log"
 	"github.com/ethereum/go-ethereum/rlp"
+	"github.com/ethereum/go-ethereum/signer/core/apitypes"
 	"github.com/nervosnetwork/ckb-sdk-go/crypto/secp256k1"
 	"math/big"
 	"remote-sign-svr/tables"
@@ -26,16 +30,19 @@ var (
 type SignType int
 
 const (
-	SignTypeTx  SignType = 0
-	SignTypeMsg SignType = 1
+	SignTypeTx     SignType = 0
+	SignTypeMsg    SignType = 1
+	SignTypeETH712 SignType = 2
 )
 
-func Sign(signType SignType, addrInfo tables.TableAddressInfo, data string, chainId *big.Int) (string, error) {
+func Sign(signType SignType, addrInfo tables.TableAddressInfo, data string, chainId *big.Int, mmJsonObj *common.MMJsonObj) (string, error) {
 	switch signType {
 	case SignTypeTx:
 		return signTx(addrInfo, data, chainId)
 	case SignTypeMsg:
 		return signMsg(addrInfo, data)
+	case SignTypeETH712:
+		return sign712(addrInfo, chainId.Int64(), data, mmJsonObj)
 	default:
 		return "", ErrUnsupportedSignType
 	}
@@ -135,4 +142,33 @@ func signMsg(addrInfo tables.TableAddressInfo, data string) (string, error) {
 	default:
 		return "", ErrUnsupportedAddrChain
 	}
+}
+
+func sign712(addrInfo tables.TableAddressInfo, chainId int64, signMsg string, mmJsonObj *common.MMJsonObj) (string, error) {
+	log.Info("sign712:", chainId, signMsg, addrInfo.Address)
+	var signData []byte
+	private := addrInfo.Private
+
+	var obj3 apitypes.TypedData
+	mmJson := mmJsonObj.String()
+	oldChainId := fmt.Sprintf("chainId\":%d", chainId)
+	newChainId := fmt.Sprintf("chainId\":\"%d\"", chainId)
+	mmJson = strings.ReplaceAll(mmJson, oldChainId, newChainId)
+	oldDigest := "\"digest\":\"\""
+	newDigest := fmt.Sprintf("\"digest\":\"%s\"", signMsg)
+	mmJson = strings.ReplaceAll(mmJson, oldDigest, newDigest)
+
+	_ = json.Unmarshal([]byte(mmJson), &obj3)
+	var mmHash, signature []byte
+	mmHash, signature, err := sign.EIP712Signature(obj3, private)
+	if err != nil {
+		return "", fmt.Errorf("sign.EIP712Signature err: %s", err.Error())
+	}
+
+	signData = append(signature, mmHash...)
+
+	hexChainId := fmt.Sprintf("%x", chainId)
+	chainIdData := common.Hex2Bytes(fmt.Sprintf("%016s", hexChainId))
+	signData = append(signData, chainIdData...)
+	return common.Bytes2Hex(signData), nil
 }

@@ -2,6 +2,7 @@ package handle
 
 import (
 	"fmt"
+	"github.com/dotbitHQ/das-lib/common"
 	"github.com/dotbitHQ/das-lib/http_api"
 	"github.com/gin-gonic/gin"
 	"github.com/scorpiotzh/toolib"
@@ -14,10 +15,11 @@ import (
 )
 
 type ReqRemoteSign struct {
-	SignType   wallet.SignType `json:"sign_type"`
-	Address    string          `json:"address"`
-	EvmChainID int64           `json:"evm_chain_id"`
-	Data       string          `json:"data"`
+	SignType   wallet.SignType   `json:"sign_type"`
+	Address    string            `json:"address"`
+	EvmChainID int64             `json:"evm_chain_id"`
+	Data       string            `json:"data"`
+	MMJson     *common.MMJsonObj `json:"mm_json"`
 }
 
 func (r *ReqRemoteSign) ChainId() *big.Int {
@@ -90,7 +92,7 @@ func (h *HttpHandle) doRemoteSign(req *ReqRemoteSign, apiResp *http_api.ApiResp)
 	}
 
 	// sign
-	data, err := wallet.Sign(req.SignType, addrInfo, req.Data, req.ChainId())
+	data, err := wallet.Sign(req.SignType, addrInfo, req.Data, req.ChainId(), req.MMJson)
 	if err != nil {
 		switch err {
 		case wallet.ErrUnsupportedAddrChain:
