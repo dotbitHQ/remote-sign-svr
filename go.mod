@@ -1,9 +1,9 @@
 module remote-sign-svr
 
-go 1.17
+go 1.18
 
 require (
-	github.com/dotbitHQ/das-lib v1.1.1-0.20230919062955-38c00a5ec8ff
+	github.com/dotbitHQ/das-lib v1.1.1-0.20231123020948-b7a5fa707ed2
 	github.com/scorpiotzh/toolib v1.1.6
 	github.com/urfave/cli/v2 v2.10.2
 )
@@ -91,6 +91,6 @@ require (
 )
 
 require (
-	github.com/getsentry/sentry-go v0.24.1
+	github.com/getsentry/sentry-go v0.25.0
 	github.com/smartystreets/goconvey v1.8.1 // indirect
 )
