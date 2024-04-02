@@ -3,15 +3,15 @@ module remote-sign-svr
 go 1.18
 
 require (
-	github.com/dotbitHQ/das-lib v1.1.1-0.20231123020948-b7a5fa707ed2
+	github.com/dotbitHQ/das-lib v1.1.1-0.20240401095025-65ab72e9eee8
 	github.com/scorpiotzh/toolib v1.1.6
 	github.com/urfave/cli/v2 v2.10.2
 )
 
 require (
-	github.com/btcsuite/btcd v0.23.3
+	github.com/btcsuite/btcd v0.24.0
 	github.com/btcsuite/btcd/btcec/v2 v2.2.0
-	github.com/btcsuite/btcd/btcutil v1.1.3
+	github.com/btcsuite/btcd/btcutil v1.1.5
 	github.com/ethereum/go-ethereum v1.10.26
 	github.com/fsnotify/fsnotify v1.5.4
 	github.com/gin-gonic/gin v1.8.1
@@ -24,9 +24,11 @@ require (
 require (
 	github.com/Andrew-M-C/go.emoji v1.0.1 // indirect
 	github.com/StackExchange/wmi v0.0.0-20180116203802-5d049714c4a6 // indirect
-	github.com/btcsuite/btcd/chaincfg/chainhash v1.0.1 // indirect
+	github.com/btcsuite/btcd/chaincfg/chainhash v1.1.0 // indirect
 	github.com/btcsuite/btclog v0.0.0-20170628155309-84c8d2346e9f // indirect
 	github.com/btcsuite/btcutil v1.0.3-0.20201208143702-a53e38424cce // indirect
+	github.com/btcsuite/go-socks v0.0.0-20170105172521-4720035b7bfd // indirect
+	github.com/btcsuite/websocket v0.0.0-20150119174127-31079b680792 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e // indirect
 	github.com/clipperhouse/uax29 v1.12.4 // indirect

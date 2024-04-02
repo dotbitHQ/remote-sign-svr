@@ -133,7 +133,14 @@ func (t *ToolPrompt) initWalletFunc() {
 		}
 		return t.importNow(res)
 	}
-	t.walletFunc["5.back"] = func() error {
+	t.walletFunc["5.BTC"] = func() error {
+		res, err := wallet.CreateWalletBTC()
+		if err != nil {
+			return fmt.Errorf("CreateWalletBTC err: %s", err.Error())
+		}
+		return t.importNow(res)
+	}
+	t.walletFunc["6.back"] = func() error {
 		return t.Menu()
 	}
 }
@@ -152,7 +159,7 @@ func (t *ToolPrompt) importWallet() error {
 		HideHelp: true,
 		Size:     len(t.walletFunc),
 		Label:    "Please select the type of wallet to import ⬇️",
-		Items:    []string{"1.EVM", "2.TRON", "3.DOGE", "4.CKB", "5.back"},
+		Items:    []string{"1.EVM", "2.TRON", "3.DOGE", "4.CKB", "5.BTC", "6.back"},
 	}
 	index, _, err := prompts.Run()
 	if err != nil {
@@ -168,6 +175,8 @@ func (t *ToolPrompt) importWallet() error {
 		addrChain = tables.AddrChainDOGE
 	case 3:
 		addrChain = tables.AddrChainCKB
+	case 4:
+		addrChain = tables.AddrChainBTC
 	default:
 		return nil
 	}

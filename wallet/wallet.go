@@ -79,3 +79,32 @@ func CreateWalletCKB(mode address.Mode) (*AddressInfo, error) {
 	}
 	return &AddressInfo{AddrChain: tables.AddrChainCKB, Address: res.Address, Private: strings.TrimPrefix(res.PrivateKey, "0x"), LockArgs: res.LockArgs}, nil
 }
+
+func CreateWalletBTC() (*AddressInfo, error) {
+	netParams := bitcoin.GetBTCMainNetParams()
+	key, err := btcec.NewPrivateKey()
+	if err != nil {
+		return nil, fmt.Errorf("NewPrivateKey err: %s", err.Error())
+	}
+	wif, err := btcutil.NewWIF(key, &netParams, true)
+	if err != nil {
+		return nil, fmt.Errorf("btcutil.NewWIF err: %s", err.Error())
+	}
+	addressPubKey, err := btcutil.NewAddressPubKey(wif.SerializePubKey(), &netParams)
+	if err != nil {
+		return nil, fmt.Errorf("btcutil.NewAddressPubKey err: %s", err.Error())
+	}
+	pkHash := addressPubKey.AddressPubKeyHash().Hash160()[:]
+
+	addressWPH, err := btcutil.NewAddressWitnessPubKeyHash(pkHash, &netParams)
+	if err != nil {
+		return nil, fmt.Errorf("NewAddressWitnessPubKeyHash err: %s", err.Error())
+	}
+
+	payload := hex.EncodeToString(addressPubKey.AddressPubKeyHash().Hash160()[:])
+	wifStr := wif.String()
+	addr := addressWPH.EncodeAddress()
+	private := hex.EncodeToString(key.Serialize())
+
+	return &AddressInfo{AddrChain: tables.AddrChainDOGE, Address: addr, Private: private, Payload: payload, WifStr: wifStr}, nil
+}

@@ -98,6 +98,20 @@ func (h *HttpHandle) doImportAddress(req *ReqImportAddress, apiResp *http_api.Ap
 		if compress {
 			compressType = tables.CompressTypeTrue
 		}
+	case tables.AddrChainBTC:
+		_, _, err := bitcoin.FormatBTCAddr(req.Address)
+		if err != nil {
+			apiResp.ApiRespErr(http_api.ApiCodeParamsInvalid, err.Error())
+			return fmt.Errorf("bitcoin.FormatBTCAddr err: %s", err.Error())
+		}
+		_, _, compress, err := bitcoin.HexPrivateKeyToScript(req.Address, bitcoin.GetBTCMainNetParams(), private)
+		if err != nil {
+			apiResp.ApiRespErr(http_api.ApiCodeParamsInvalid, err.Error())
+			return fmt.Errorf("bitcoin.HexPrivateKeyToScript err: %s", err.Error())
+		}
+		if compress {
+			compressType = tables.CompressTypeTrue
+		}
 	case tables.AddrChainCKB:
 		if _, err := address.Parse(req.Address); err != nil {
 			apiResp.ApiRespErr(http_api.ApiCodeParamsInvalid, err.Error())

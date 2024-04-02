@@ -31,6 +31,7 @@ const (
 	AddrChainTRON AddrChain = "TRON"
 	AddrChainDOGE AddrChain = "DOGE"
 	AddrChainCKB  AddrChain = "CKB"
+	AddrChainBTC  AddrChain = "BTC"
 )
 
 type AddrStatus int
