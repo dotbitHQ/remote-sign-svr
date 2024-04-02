@@ -103,6 +103,25 @@ func signTx(addrInfo tables.TableAddressInfo, data string, chainId *big.Int) (st
 		buf := bytes.NewBuffer(make([]byte, 0, tx.SerializeSizeStripped()))
 		_ = tx.SerializeNoWitness(buf)
 		return hex.EncodeToString(buf.Bytes()), nil
+	case tables.AddrChainBTC:
+		var tx wire.MsgTx
+		if err = tx.DeserializeNoWitness(bytes.NewReader(bys)); err != nil {
+			return "", fmt.Errorf("tx.DeserializeNoWitness err: %s", err.Error())
+		}
+		for i := 0; i < len(tx.TxIn); i++ {
+			pkScript, privateKey, compress, err := bitcoin.HexPrivateKeyToScript(addrInfo.Address, bitcoin.GetBTCMainNetParams(), private)
+			if err != nil {
+				return "", fmt.Errorf("HexPrivateKeyToScript err: %s", err.Error())
+			}
+			sig, err := txscript.SignatureScript(&tx, i, pkScript, txscript.SigHashAll, privateKey, compress)
+			if err != nil {
+				return "", fmt.Errorf("SignatureScript err: %s", err.Error())
+			}
+			tx.TxIn[i].SignatureScript = sig
+		}
+		buf := bytes.NewBuffer(make([]byte, 0, tx.SerializeSizeStripped()))
+		_ = tx.SerializeNoWitness(buf)
+		return hex.EncodeToString(buf.Bytes()), nil
 	case tables.AddrChainCKB: // sig hex
 		key, err := secp256k1.HexToKey(private)
 		if err != nil {
@@ -135,6 +154,20 @@ func signMsg(addrInfo tables.TableAddressInfo, data string) (string, error) {
 		return hex.EncodeToString(sig), nil
 	case tables.AddrChainDOGE:
 		sig, err := sign.DogeSignature([]byte(data), private, addrInfo.CompressType.Bool())
+		if err != nil {
+			return "", fmt.Errorf("sign.DogeSignature err: %s", err.Error())
+		}
+		return hex.EncodeToString(sig), nil
+	case tables.AddrChainBTC:
+		segwitType := sign.P2PKH
+		addrType, _, _ := bitcoin.FormatBTCAddr(addrInfo.Address)
+		switch addrType {
+		case bitcoin.BtcAddressTypeP2WPKH:
+			segwitType = sign.P2WPKH
+		case bitcoin.BtcAddressTypeP2PKH:
+			segwitType = sign.P2PKH
+		}
+		sig, err := sign.BitcoinSignature([]byte(data), private, addrInfo.CompressType.Bool(), segwitType)
 		if err != nil {
 			return "", fmt.Errorf("sign.DogeSignature err: %s", err.Error())
 		}
