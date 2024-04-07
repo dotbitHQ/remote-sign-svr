@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/btcsuite/btcd/btcec/v2"
 	"github.com/btcsuite/btcd/btcutil"
+	"github.com/btcsuite/btcd/chaincfg"
 	"github.com/dotbitHQ/das-lib/bitcoin"
 	"github.com/dotbitHQ/das-lib/common"
 	"github.com/ethereum/go-ethereum/crypto"
@@ -80,8 +81,7 @@ func CreateWalletCKB(mode address.Mode) (*AddressInfo, error) {
 	return &AddressInfo{AddrChain: tables.AddrChainCKB, Address: res.Address, Private: strings.TrimPrefix(res.PrivateKey, "0x"), LockArgs: res.LockArgs}, nil
 }
 
-func CreateWalletBTC() (*AddressInfo, error) {
-	netParams := bitcoin.GetBTCMainNetParams()
+func CreateWalletBTC(netParams chaincfg.Params) (*AddressInfo, error) {
 	key, err := btcec.NewPrivateKey()
 	if err != nil {
 		return nil, fmt.Errorf("NewPrivateKey err: %s", err.Error())

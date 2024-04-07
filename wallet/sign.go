@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/btcsuite/btcd/btcutil"
 	"github.com/btcsuite/btcd/txscript"
 	"github.com/btcsuite/btcd/wire"
 	"github.com/dotbitHQ/das-lib/bitcoin"
@@ -35,10 +36,15 @@ const (
 	SignTypeETH712 SignType = 2
 )
 
-func Sign(signType SignType, addrInfo tables.TableAddressInfo, data string, chainId *big.Int, mmJsonObj *common.MMJsonObj) (string, error) {
+type UTXO struct {
+	Address string `json:"address"`
+	Value   int64  `json:"value"`
+}
+
+func Sign(signType SignType, addrInfo tables.TableAddressInfo, data string, chainId *big.Int, mmJsonObj *common.MMJsonObj, utxos []UTXO) (string, error) {
 	switch signType {
 	case SignTypeTx:
-		return signTx(addrInfo, data, chainId)
+		return signTx(addrInfo, data, chainId, utxos)
 	case SignTypeMsg:
 		return signMsg(addrInfo, data)
 	case SignTypeETH712:
@@ -48,7 +54,7 @@ func Sign(signType SignType, addrInfo tables.TableAddressInfo, data string, chai
 	}
 }
 
-func signTx(addrInfo tables.TableAddressInfo, data string, chainId *big.Int) (string, error) {
+func signTx(addrInfo tables.TableAddressInfo, data string, chainId *big.Int, utxos []UTXO) (string, error) {
 	private := addrInfo.Private
 	bys, err := hex.DecodeString(strings.TrimPrefix(data, "0x"))
 	if err != nil {
@@ -108,16 +114,36 @@ func signTx(addrInfo tables.TableAddressInfo, data string, chainId *big.Int) (st
 		if err = tx.DeserializeNoWitness(bytes.NewReader(bys)); err != nil {
 			return "", fmt.Errorf("tx.DeserializeNoWitness err: %s", err.Error())
 		}
-		for i := 0; i < len(tx.TxIn); i++ {
+		var prevOutFetcher txscript.MultiPrevOutFetcher
+		netParams, _, _, err := bitcoin.FormatBTCAddr(addrInfo.Address)
+		if err != nil {
+			return "", fmt.Errorf("bitcoin.FormatBTCAddr err: %s", err.Error())
+		}
+		for i := 0; i < len(utxos); i++ {
+			decodeAddress, err := btcutil.DecodeAddress(utxos[i].Address, &netParams)
+			if err != nil {
+				return "", fmt.Errorf("btcutil.DecodeAddress err: %s", err.Error())
+			}
+			pkScript, err := txscript.PayToAddrScript(decodeAddress)
+			if err != nil {
+				return "", fmt.Errorf("txscript.PayToAddrScript err: %s", err.Error())
+			}
+			prevOutFetcher.AddPrevOut(tx.TxIn[i].PreviousOutPoint, &wire.TxOut{
+				Value:    utxos[i].Value,
+				PkScript: pkScript,
+			})
+		}
+		txSigHashes := txscript.NewTxSigHashes(&tx, &prevOutFetcher)
+		for i := 0; i < len(utxos); i++ {
 			pkScript, privateKey, compress, err := bitcoin.HexPrivateKeyToScript(addrInfo.Address, bitcoin.GetBTCMainNetParams(), private)
 			if err != nil {
 				return "", fmt.Errorf("HexPrivateKeyToScript err: %s", err.Error())
 			}
-			sig, err := txscript.SignatureScript(&tx, i, pkScript, txscript.SigHashAll, privateKey, compress)
+			sigScript, err := txscript.WitnessSignature(&tx, txSigHashes, i, utxos[i].Value, pkScript, txscript.SigHashAll, privateKey, compress)
 			if err != nil {
-				return "", fmt.Errorf("SignatureScript err: %s", err.Error())
+				return "", fmt.Errorf("txscript.WitnessSignature err: %s", err.Error())
 			}
-			tx.TxIn[i].SignatureScript = sig
+			tx.TxIn[i].Witness = sigScript
 		}
 		buf := bytes.NewBuffer(make([]byte, 0, tx.SerializeSizeStripped()))
 		_ = tx.SerializeNoWitness(buf)
@@ -160,7 +186,7 @@ func signMsg(addrInfo tables.TableAddressInfo, data string) (string, error) {
 		return hex.EncodeToString(sig), nil
 	case tables.AddrChainBTC:
 		segwitType := sign.P2PKH
-		addrType, _, _ := bitcoin.FormatBTCAddr(addrInfo.Address)
+		_, addrType, _, _ := bitcoin.FormatBTCAddr(addrInfo.Address)
 		switch addrType {
 		case bitcoin.BtcAddressTypeP2WPKH:
 			segwitType = sign.P2WPKH

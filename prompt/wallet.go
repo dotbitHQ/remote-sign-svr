@@ -2,6 +2,7 @@ package prompt
 
 import (
 	"fmt"
+	"github.com/dotbitHQ/das-lib/bitcoin"
 	"github.com/dotbitHQ/das-lib/http_api"
 	"github.com/manifoldco/promptui"
 	"github.com/nervosnetwork/ckb-sdk-go/address"
@@ -134,7 +135,19 @@ func (t *ToolPrompt) initWalletFunc() {
 		return t.importNow(res)
 	}
 	t.walletFunc["5.BTC"] = func() error {
-		res, err := wallet.CreateWalletBTC()
+		prompt := promptui.Prompt{
+			Label: "Whether to create a test network address(y/n)",
+		}
+		key, err := prompt.Run()
+		if err != nil {
+			return fmt.Errorf("prompt.Run() err: %s", err.Error())
+		}
+		netParams := bitcoin.GetBTCMainNetParams()
+		switch key {
+		case "y", "Y", "yes", "YES":
+			netParams = bitcoin.GetBTCTestNetParams()
+		}
+		res, err := wallet.CreateWalletBTC(netParams)
 		if err != nil {
 			return fmt.Errorf("CreateWalletBTC err: %s", err.Error())
 		}

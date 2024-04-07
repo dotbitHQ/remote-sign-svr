@@ -15,11 +15,12 @@ import (
 )
 
 type ReqRemoteSign struct {
-	SignType   wallet.SignType   `json:"sign_type"`
-	Address    string            `json:"address"`
-	EvmChainID int64             `json:"evm_chain_id"`
-	Data       string            `json:"data"`
-	MMJson     *common.MMJsonObj `json:"mm_json"`
+	SignType     wallet.SignType   `json:"sign_type"`
+	Address      string            `json:"address"`
+	EvmChainID   int64             `json:"evm_chain_id"`
+	Data         string            `json:"data"`
+	MMJson       *common.MMJsonObj `json:"mm_json"`
+	WitnessUTXOS []wallet.UTXO     `json:"witness_utxos"`
 }
 
 func (r *ReqRemoteSign) ChainId() *big.Int {
@@ -92,7 +93,7 @@ func (h *HttpHandle) doRemoteSign(req *ReqRemoteSign, apiResp *http_api.ApiResp)
 	}
 
 	// sign
-	data, err := wallet.Sign(req.SignType, addrInfo, req.Data, req.ChainId(), req.MMJson)
+	data, err := wallet.Sign(req.SignType, addrInfo, req.Data, req.ChainId(), req.MMJson, req.WitnessUTXOS)
 	if err != nil {
 		switch err {
 		case wallet.ErrUnsupportedAddrChain:
