@@ -36,7 +36,7 @@ func (t *ToolPrompt) importNow(wa *wallet.AddressInfo) error {
 	fmt.Println("Address:", wa.Address)
 	fmt.Println("Private:", wa.Private)
 	switch wa.AddrChain {
-	case tables.AddrChainDOGE:
+	case tables.AddrChainDOGE, tables.AddrChainBTC:
 		fmt.Println("Payload:", wa.Payload)
 		fmt.Println("Wif:", wa.WifStr)
 	case tables.AddrChainCKB:

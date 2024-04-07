@@ -106,5 +106,5 @@ func CreateWalletBTC(netParams chaincfg.Params) (*AddressInfo, error) {
 	addr := addressWPH.EncodeAddress()
 	private := hex.EncodeToString(key.Serialize())
 
-	return &AddressInfo{AddrChain: tables.AddrChainDOGE, Address: addr, Private: private, Payload: payload, WifStr: wifStr}, nil
+	return &AddressInfo{AddrChain: tables.AddrChainBTC, Address: addr, Private: private, Payload: payload, WifStr: wifStr}, nil
 }
