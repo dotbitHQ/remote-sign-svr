@@ -114,11 +114,14 @@ func signTx(addrInfo tables.TableAddressInfo, data string, chainId *big.Int, utx
 		if err = tx.DeserializeNoWitness(bytes.NewReader(bys)); err != nil {
 			return "", fmt.Errorf("tx.DeserializeNoWitness err: %s", err.Error())
 		}
-		var prevOutFetcher txscript.MultiPrevOutFetcher
+		if len(tx.TxIn) != len(utxos) {
+			return "", fmt.Errorf("len of txin != len of utxo")
+		}
 		netParams, _, _, err := bitcoin.FormatBTCAddr(addrInfo.Address)
 		if err != nil {
 			return "", fmt.Errorf("bitcoin.FormatBTCAddr err: %s", err.Error())
 		}
+		prevOutFetcher := txscript.NewMultiPrevOutFetcher(nil)
 		for i := 0; i < len(utxos); i++ {
 			decodeAddress, err := btcutil.DecodeAddress(utxos[i].Address, &netParams)
 			if err != nil {
@@ -133,7 +136,7 @@ func signTx(addrInfo tables.TableAddressInfo, data string, chainId *big.Int, utx
 				PkScript: pkScript,
 			})
 		}
-		txSigHashes := txscript.NewTxSigHashes(&tx, &prevOutFetcher)
+		txSigHashes := txscript.NewTxSigHashes(&tx, prevOutFetcher)
 		for i := 0; i < len(utxos); i++ {
 			pkScript, privateKey, compress, err := bitcoin.HexPrivateKeyToScript(addrInfo.Address, bitcoin.GetBTCMainNetParams(), private)
 			if err != nil {
