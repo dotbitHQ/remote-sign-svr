@@ -3,7 +3,7 @@ module remote-sign-svr
 go 1.18
 
 require (
-	github.com/dotbitHQ/das-lib v1.1.1-0.20231123020948-b7a5fa707ed2
+	github.com/dotbitHQ/das-lib v1.2.1-0.20240730025359-26a86c259450
 	github.com/scorpiotzh/toolib v1.1.6
 	github.com/urfave/cli/v2 v2.10.2
 )
@@ -63,6 +63,7 @@ require (
 	github.com/scorpiotzh/mylog v1.0.10 // indirect
 	github.com/shirou/gopsutil v3.21.4-0.20210419000835-c7a38de76ee5+incompatible // indirect
 	github.com/shopspring/decimal v1.3.1 // indirect
+	github.com/sjatsh/uint128 v0.0.0-20240313033229-578752bd051c // indirect
 	github.com/stretchr/objx v0.5.0 // indirect
 	github.com/tklauser/go-sysconf v0.3.11 // indirect
 	github.com/tklauser/numcpus v0.6.0 // indirect
