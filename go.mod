@@ -3,7 +3,7 @@ module remote-sign-svr
 go 1.18
 
 require (
-	github.com/dotbitHQ/das-lib v1.2.1-0.20240822060735-69cb47b462e1
+	github.com/dotbitHQ/das-lib v1.2.1-0.20240823031509-948be9fa1408
 	github.com/scorpiotzh/toolib v1.1.6
 	github.com/urfave/cli/v2 v2.10.2
 )
